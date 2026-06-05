@@ -1,0 +1,33 @@
+# API .htaccess - Enable clean URLs and routing
+
+# Enable mod_rewrite
+RewriteEngine On
+
+# Set base directory
+RewriteBase /api/
+
+# Remove .php extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php
+
+# Redirect to PHP files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ $1.php [QSA,L]
+
+# Security headers
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET, POST, PATCH, DELETE, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+Header set Access-Control-Max-Age "86400"
+
+# Prevent access to config files
+<FilesMatch "config\.php">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Error pages
+ErrorDocument 404 {"message":"Not found"}
+ErrorDocument 500 {"message":"Internal server error"}
